@@ -2,3 +2,4 @@ bindgen
 rooted.rs
 rooted
 *.tsv
+*.orig
