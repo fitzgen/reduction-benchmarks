@@ -24,4 +24,10 @@ $ ./setup.sh
 
 ### Running the Benchmarks
 
-TODO
+To run the benchmarks:
+
+```
+$ ./bench.sh
+```
+
+This will generate a tsv file with the benchmark results in it.

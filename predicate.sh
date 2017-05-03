@@ -20,11 +20,11 @@ $BINDGEN \
     --enable-cxx-namespaces \
     -o $BINDINGS \
     -- \
-    -include "./replacements.hpp" \
+    -include "$BENCHMARK_DIR/replacements.hpp" \
     -std=c++14
 
 rustc --test rooted.rs
 
 ./rooted \
     2>&1 \
-    | grep -F 'assertion failed: `(left == right)` (left: `32`, right: `40`): Size of template specialization: root :: JS :: PersistentRooted < * mut :: std :: os :: raw :: c_void >'
+    | grep -E "assertion failed: .*: Size of template specialization: root :: JS :: PersistentRooted < \* mut :: std :: os :: raw :: c_void >"
