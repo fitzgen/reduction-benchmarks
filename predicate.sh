@@ -13,18 +13,20 @@ else
 fi
 
 BINDINGS=./rooted.rs
+TESTFILE=./rooted
 
-$BINDGEN \
-    $HEADER \
+"$BINDGEN" \
+    "$HEADER" \
     --whitelist-function "JS::AddPersistentRoot" \
     --enable-cxx-namespaces \
-    -o $BINDINGS \
+    -o "$BINDINGS" \
     -- \
     -include "$BENCHMARK_DIR/replacements.hpp" \
+    -x c++ \
     -std=c++14
 
-rustc --test rooted.rs
+rustc --test "$BINDINGS" -o "$TESTFILE"
 
-./rooted \
+"$TESTFILE" \
     2>&1 \
     | grep -E "assertion failed: .*: Size of template specialization: root :: JS :: PersistentRooted < \* mut :: std :: os :: raw :: c_void >"

@@ -42,25 +42,33 @@ echo
 echo "Reducer	Workers	Time (seconds)	Max RSS (Kbytes)	Avg. RSS (Kbytes)" \
      > $RESULTS
 
-MAX_SIZE=531
+MAX_SIZE=1000
 
 function size_of_header {
     wc -c $HEADER | cut -f1 -d' '
 }
 
+function restore_orig {
+    mv $HEADER.orig $HEADER
+}
+
 function is_small_and_interesting {
     size=$(size_of_header)
-    echo Reduced to $size bytes
+    echo "    ...reduced to $size bytes."
 
     if (( $size > $MAX_SIZE )); then
-        echo error: was not reduced small enough!
+        echo Error: was not reduced small enough!
+        restore_orig
         exit 1
     fi
 
     ./predicate.sh >/dev/null 2>&1 || {
-        echo error: is not interesting after reduction!
+        echo Error: is not interesting after reduction!
+        restore_orig
         exit 1
     }
+
+    restore_orig
 }
 
 echo
@@ -68,7 +76,7 @@ echo Initial test case is $(size_of_header) bytes
 echo
 
 for (( WORKERS=1; $WORKERS <= 128; WORKERS=2*$WORKERS )); do
-    echo Benching preduce with $WORKERS workers
+    echo Benching preduce with $WORKERS workers...
 
     export BENCHING_PREDUCE=1
     TIME="preduce \t $WORKERS \t %e \t %M \t %t" \
@@ -81,7 +89,6 @@ for (( WORKERS=1; $WORKERS <= 128; WORKERS=2*$WORKERS )); do
     # the benchmark results are invalid), then restore the original, unreduced
     # test case.
     is_small_and_interesting
-    mv $HEADER.orig $HEADER
 
     # echo Testing creduce with $WORKERS workers
 
@@ -93,7 +100,6 @@ for (( WORKERS=1; $WORKERS <= 128; WORKERS=2*$WORKERS )); do
 
     # Same as above.
     # is_small_and_interesting
-    # mv $HEADER.orig $HEADER
 done
 
 echo
