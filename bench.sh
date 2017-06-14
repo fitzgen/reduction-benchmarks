@@ -75,29 +75,29 @@ echo
 echo Initial test case is $(size_of_header) bytes
 echo
 
-for (( WORKERS=4; $WORKERS <= 256; WORKERS=2*$WORKERS )); do
+for (( WORKERS=48; $WORKERS <= 48; WORKERS=2*$WORKERS )); do
     export BENCHING_PREDUCE=1
 
     echo Benching preduce with $WORKERS workers...
 
     TIME="preduce \t $WORKERS \t %e \t %M" \
         time -o $RESULTS --append \
-        $PREDUCE --workers $WORKERS $HEADER $BENCH_DIR/predicate.sh ~/preduce/reducers/*.py # \
-        # > /dev/null 2>&1
+        $PREDUCE --workers $WORKERS $HEADER $BENCH_DIR/predicate.sh ~/preduce/reducers/*.py \
+        > "preduce-$WORKERS.log" 2>&1
 
     # Ensure that the test case was reduced and is still interesting (or else
     # the benchmark results are invalid), then restore the original, unreduced
     # test case.
     is_small_and_interesting
 
-    echo Benching preduce (no merging) with $WORKERS workers...
+    echo "Benching preduce (no merging) with $WORKERS workers..."
 
     TIME="preduce-no-merging \t $WORKERS \t %e \t %M" \
         time -o $RESULTS --append \
         $PREDUCE \
             --workers $WORKERS --no-merging \
-            $HEADER $BENCH_DIR/predicate.sh ~/preduce/reducers/*.py # \
-        # > /dev/null 2>&1
+            $HEADER $BENCH_DIR/predicate.sh ~/preduce/reducers/*.py \
+        > "preduce-no-merging-$WORKERS.log" 2>&1
 
     is_small_and_interesting
 
@@ -106,10 +106,10 @@ for (( WORKERS=4; $WORKERS <= 256; WORKERS=2*$WORKERS )); do
     echo Testing creduce with $WORKERS workers
 
     # TODO FITZGEN: equivalent reduction passes
-    TIME="creduce \t $WORKERS \t %e \t %M \t %t" \
+    TIME="creduce \t $WORKERS \t %e \t %M" \
         time -o $RESULTS --append \
-        creduce --n $WORKERS ./predicate.sh $HEADER # \
-        # > /dev/null 2>&1
+        creduce --n $WORKERS ./predicate.sh $HEADER \
+        > "creduce-$WORKERS.log" 2>&1
 
     # Same as above.
     is_small_and_interesting
