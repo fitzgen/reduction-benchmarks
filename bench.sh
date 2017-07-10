@@ -54,7 +54,8 @@ function restore_orig {
 
 function is_small_and_interesting {
     size=$(size_of_header)
-    echo "    ...reduced to $size bytes."
+    elapsed=$(tail -n 1 $RESULTS | cut -f 2)
+    echo "    reduced to $size bytes in $elapsed seconds."
 
     # if (( $size > $MAX_SIZE )); then
     #     echo Error: was not reduced small enough!
@@ -62,7 +63,7 @@ function is_small_and_interesting {
     #     exit 1
     # fi
 
-    # ./predicate.sh >/dev/null 2>&1 || {
+    # BENCHING_PREDUCE=1 ./predicate.sh "$HEADER" >/dev/null 2>&1 || {
     #     echo Error: is not interesting after reduction!
     #     restore_orig
     #     exit 1
@@ -75,6 +76,13 @@ echo
 echo Initial test case is $(size_of_header) bytes
 echo
 
+BENCHING_PREDUCE=1 ./predicate.sh "$HEADER" >/dev/null 2>&1 || {
+    echo Error: the test case is not initially interesting! This is a bug in the
+    echo benchmark, or maybe the wrong version of libclang is installed or
+    echo something like that.
+    exit 1
+}
+
 for (( WORKERS=48; $WORKERS <= 48; WORKERS=2*$WORKERS )); do
     export BENCHING_PREDUCE=1
 
@@ -82,7 +90,7 @@ for (( WORKERS=48; $WORKERS <= 48; WORKERS=2*$WORKERS )); do
 
     TIME="preduce \t $WORKERS \t %e \t %M" \
         time -o $RESULTS --append \
-        $PREDUCE --workers $WORKERS $HEADER $BENCH_DIR/predicate.sh ~/preduce/reducers/*.py \
+        "$PREDUCE" --workers "$WORKERS" "$HEADER" "$BENCH_DIR/predicate.sh" ~/preduce/reducers/*.py \
         > "preduce-$WORKERS.log" 2>&1
 
     # Ensure that the test case was reduced and is still interesting (or else
@@ -94,9 +102,9 @@ for (( WORKERS=48; $WORKERS <= 48; WORKERS=2*$WORKERS )); do
 
     TIME="preduce-no-merging \t $WORKERS \t %e \t %M" \
         time -o $RESULTS --append \
-        $PREDUCE \
-            --workers $WORKERS --no-merging \
-            $HEADER $BENCH_DIR/predicate.sh ~/preduce/reducers/*.py \
+        "$PREDUCE" \
+            --workers "$WORKERS" --no-merging \
+            "$HEADER" "$BENCH_DIR/predicate.sh" ~/preduce/reducers/*.py \
         > "preduce-no-merging-$WORKERS.log" 2>&1
 
     is_small_and_interesting
