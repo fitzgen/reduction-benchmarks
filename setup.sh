@@ -13,6 +13,10 @@ function msg {
     echo
 }
 
+# Because our predicate relies on the specific formatting of error messages, pin
+# to a specific rustc version.
+rustup override set nightly-2017-07-19
+
 if [[ ! -d bindgen ]]; then
     msg "Cloning bindgen..."
     git clone "$BINDGEN_REPO" bindgen

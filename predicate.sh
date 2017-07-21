@@ -6,7 +6,7 @@ BENCHMARK_DIR=$(dirname $0)
 
 BINDGEN=$BENCHMARK_DIR/bindgen/target/release/bindgen
 
-if [[ "${BENCHING_PREDUCE:=0}" != "0" ]]; then
+if [[ "${BENCHING_PREDUCE:=0}" == "1" ]]; then
     HEADER=$1
 else
     HEADER=./rooted.hpp
@@ -25,8 +25,11 @@ TESTFILE=./rooted
     -x c++ \
     -std=c++14
 
-rustc --test "$BINDINGS" -o "$TESTFILE"
+rustup run nightly-2017-07-19 rustc --test "$BINDINGS" -o "$TESTFILE"
 
-"$TESTFILE" \
-    2>&1 \
-    | grep -E "assertion failed: .*: Size of template specialization: root :: JS :: PersistentRooted < \* mut :: std :: os :: raw :: c_void >"
+set +ex
+OUTPUT=$("$TESTFILE" 2>&1)
+set -e
+
+echo "$OUTPUT" | grep -q "assertion failed:"
+echo "$OUTPUT" | grep -q "Size of template specialization: root :: JS :: PersistentRooted < \* mut :: std :: os :: raw :: c_void >"
