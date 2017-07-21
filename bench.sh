@@ -58,7 +58,7 @@ function restore_orig {
 function is_small_and_interesting {
     size=$(size_of_header)
     elapsed=$(tail -n 1 "$RESULTS" | cut -f 3)
-    echo "    reduced to $size bytes in $elapsed seconds."
+    echo "    reduced to $size bytes in $elapsed seconds ($(echo \"$size / $elapsed\" | bc -l) bytes/second)"
 
     # if (( $size > $MAX_SIZE )); then
     #     echo "Error: was not reduced small enough!"
