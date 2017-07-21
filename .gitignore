@@ -3,3 +3,5 @@ rooted.rs
 rooted
 *.tsv
 *.orig
+*.log
+creduce_bug_*
