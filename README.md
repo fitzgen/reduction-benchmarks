@@ -9,7 +9,7 @@ configures them both to use the same reduction passes.
 Before beginning, make sure you have the following installed:
 
 * `git`
-* `libclang` @ 3.9.X: https://servo.github.io/rust-bindgen/requirements.html#clang
+* `libclang` >= 3.9.X: https://servo.github.io/rust-bindgen/requirements.html#clang
 * `rustc` and `cargo`: https://www.rust-lang.org/en-US/install.html
 * `preduce`: https://github.com/fitzgen/preduce
 * `creduce`: https://embed.cs.utah.edu/creduce/
