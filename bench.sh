@@ -152,6 +152,21 @@ for (( WORKERS=48; $WORKERS <= 48; WORKERS=2*$WORKERS )); do
         --add-pass pass_lines 8 416 \
         --add-pass pass_lines 10 417 \
         --add-pass pass_lines 10 417 \
+        --add-pass pass_balanced "curly" 110 \
+        --add-pass pass_balanced "curly2" 111 \
+        --add-pass pass_balanced "curly3" 112 \
+        --add-pass pass_balanced "parens" 113 \
+        --add-pass pass_balanced "angles" 114 \
+        --add-pass pass_balanced "square" 115 \
+        --add-pass pass_balanced "curly-inside" 150 \
+        --add-pass pass_balanced "parens-inside" 151 \
+        --add-pass pass_balanced "angles-inside" 152 \
+        --add-pass pass_balanced "square-inside" 153 \
+        --add-pass pass_balanced "curly-only" 160 \
+        --add-pass pass_balanced "parens-only" 9700 \
+        --add-pass pass_balanced "angles-only" 162 \
+        --add-pass pass_balanced "square-only" 163 \
+        --add-pass pass_balanced "parens-to-zero" 9000 \
         --add-pass pass_clang remove-namespace 200 \
         --add-pass pass_clang aggregate-to-scalar 201 \
         --add-pass pass_clang local-to-global 9500 \
